@@ -28,26 +28,19 @@ interface Props {
 }
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - Genoma Invaders",
-  description: "Genoma Invaders' Privacy Policy",
+  title: "Privacy Policy - Blood & Bytes: Kagura",
+  description: "Blood & Bytes: Kagura's Privacy Policy",
 };
 
 async function getPrivacyPolicyContent(_locale: string) {
-  // You might want to have localized versions in the future
   const filePath = path.join(
     process.cwd(),
-    "data/games/genoma-invaders/privacy-policy.md",
+    "data/games/blood-and-bytes-kagura/privacy-policy.md",
   );
 
   try {
-    const fileContent = fs.readFileSync(filePath, "utf8");
+    const content = fs.readFileSync(filePath, "utf8");
 
-    // Remove frontmatter comment lines
-    const cleanedContent = fileContent
-      .replace(/\[\/\/\]: # .*$/gm, "")
-      .replace(/<!-- filepath:.*? -->/g, "");
-
-    // Process markdown using your existing unified pipeline
     const processedContent = await unified()
       .use(remarkParse)
       .use(remarkSqueezeParagraphs)
@@ -69,7 +62,7 @@ async function getPrivacyPolicyContent(_locale: string) {
       })
       .use(rehypeRaw)
       .use(rehypeStringify)
-      .process(cleanedContent);
+      .process(content);
 
     return processedContent.toString();
   } catch (error) {

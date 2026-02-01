@@ -1,5 +1,19 @@
 [
   {
+    "slug": "blood-and-bytes-kagura",
+    "isInDevelopment": true,
+    "releasedAt": null,
+    "coverImage": null,
+    "name": {
+      "en": "Blood & Bytes: Kagura",
+      "es": "Blood & Bytes: Kagura"
+    },
+    "summary": {
+      "en": "Co-op action roguelike where you and your squad fight cyber-yōkai hordes, build crazy synergies and survive wave after wave in a ruined Japan.",
+      "es": "Juego de acción cooperativa tipo roguelike en el que tú y tu escuadrón luchan contra hordas de cyber-yōkai, crean sinergias locas y sobreviven oleada tras oleada en un Japón en ruinas."
+    }
+  },
+  {
     "slug": "genoma-invaders",
     "isInDevelopment": true,
     "releasedAt": null,
