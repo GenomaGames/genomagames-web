@@ -50,3 +50,6 @@ next-env.d.ts
 # next-sitemap
 public/robots.txt
 public/sitemap*.xml
+
+# claude code
+.claude/settings.local.json
