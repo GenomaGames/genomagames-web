@@ -4,11 +4,23 @@ import { globbySync } from "globby";
 
 import { Locale } from "@/src/lib/Locale";
 
+/**
+ * Convert a native path to POSIX separators.
+ *
+ * fast-glob, which backs globby, treats backslashes as escape characters
+ * rather than separators, and it always returns matches with forward slashes.
+ */
+function toPosixPath(nativePath: string): string {
+  return nativePath.split(path.sep).join("/");
+}
+
 export class PostPathResolver {
   private readonly postsDirectoryPath: string;
 
   constructor() {
-    this.postsDirectoryPath = path.join(process.cwd(), "public/posts");
+    this.postsDirectoryPath = toPosixPath(
+      path.join(process.cwd(), "public/posts"),
+    );
   }
 
   public getPostsDirectoryPath(): string {
@@ -33,14 +45,15 @@ export class PostPathResolver {
    * Resolve all post paths for a given locale
    */
   public resolvePostPaths(locale: Locale): string[] {
-    const localizedPostsDirectoryPath: string = path.join(
+    const localizedPostsDirectoryPath: string = path.posix.join(
       this.postsDirectoryPath,
       locale,
     );
 
-    const postPaths = globbySync(
-      path.join(localizedPostsDirectoryPath, "**/*.md"),
-    );
+    const postPaths = globbySync("**/*.md", {
+      absolute: true,
+      cwd: localizedPostsDirectoryPath,
+    });
 
     if (postPaths.length === 0) {
       console.warn(`No posts found in ${localizedPostsDirectoryPath}`);
@@ -63,7 +76,10 @@ export class PostPathResolver {
 
     const directoryPath = path.dirname(basePath);
 
-    return path.resolve(directoryPath, relativePath).replace(/.*\/public/, "");
+    return toPosixPath(path.resolve(directoryPath, relativePath)).replace(
+      /.*\/public/,
+      "",
+    );
   }
 
   /**
