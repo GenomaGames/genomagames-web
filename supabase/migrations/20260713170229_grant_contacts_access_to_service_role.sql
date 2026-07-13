@@ -1,0 +1,11 @@
+-- The website server writes to contacts through the Data API, authenticated with
+-- the secret key, which maps to the service_role role. That role bypasses Row
+-- Level Security, but not Postgres privileges: without an explicit grant every
+-- request is rejected with "permission denied for table contacts".
+--
+-- Only service_role is granted anything. anon and authenticated keep no
+-- privileges at all, so the table stays unreachable from the browser.
+--
+-- delete is deliberately left out: erasing a contact is not something the
+-- registration endpoint should be able to do on its own.
+grant select, insert, update on public.contacts to service_role;
