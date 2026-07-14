@@ -15,6 +15,11 @@
    npm ci
    ```
 
+1. **Set up the environment**
+
+   Copy `.env.example` to `.env` and fill in the values. The file documents
+   where each one comes from.
+
 1. **Start developing**
 
    Start project.
@@ -31,7 +36,13 @@
    npm run start:prod
    ```
 
-   Running at http://localhost:8080
+   Running at http://localhost:3000
+
+## 🌍 Deployment
+
+The site runs with a server on Vercel, which builds and deploys every push to
+`main`. The environment variables live in the Vercel project settings, and the
+same ones are listed in `.env.example`.
 
 ## References
 
