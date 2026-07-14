@@ -34,6 +34,10 @@ interface Props {
   params: Promise<Params>;
 }
 
+// A slug with no post behind it is a 404: rendering it on demand throws while
+// looking the post up, which surfaces as a 500.
+export const dynamicParams = false;
+
 export const generateStaticParams = async ({
   params: { locale },
 }: {

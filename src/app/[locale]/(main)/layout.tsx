@@ -58,6 +58,10 @@ export const metadata: Metadata = {
   },
 };
 
+// A locale that generateStaticParams did not produce is a 404, not a page
+// rendered on demand: an unknown locale has no content behind it.
+export const dynamicParams = false;
+
 export const generateStaticParams = async (): Promise<Params[]> => {
   const staticParams: Params[] = routing.locales.map((locale) => ({ locale }));
 

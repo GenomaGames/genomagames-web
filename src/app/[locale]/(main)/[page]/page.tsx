@@ -17,6 +17,10 @@ interface Props {
   params: Promise<Params>;
 }
 
+// Without this, any path segment under a locale is taken for a page number and
+// renders an empty listing: /en/whatever would answer 200 instead of 404.
+export const dynamicParams = false;
+
 export const generateStaticParams = async ({
   params: { locale },
 }: {

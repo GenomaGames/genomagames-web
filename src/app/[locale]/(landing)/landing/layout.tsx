@@ -22,6 +22,9 @@ export const metadata = {
   title: `Genoma Games Landing`,
 };
 
+// An unknown locale is a 404, not a page rendered on demand.
+export const dynamicParams = false;
+
 export const generateStaticParams = async (): Promise<Params[]> => {
   const staticParams: Params[] = routing.locales.map((locale) => ({ locale }));
 
