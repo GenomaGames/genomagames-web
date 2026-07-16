@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 import { registerContactUseCase } from "@/src/Contacts/application/RegisterContactUseCase";
 import { contactRegistrationSchema } from "@/src/Contacts/domain/Contact";
@@ -16,7 +17,10 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   if (!result.success) {
     return NextResponse.json(
-      { error: "Invalid registration data" },
+      {
+        error: "Invalid registration data",
+        fields: z.flattenError(result.error).fieldErrors,
+      },
       { status: 400 },
     );
   }

@@ -1,6 +1,6 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-import { ContactRegistration } from "./Contact";
+import { ContactRegistration, StoredContact } from "./Contact";
 
 /**
  * Reads and writes contacts in Supabase.
@@ -12,13 +12,41 @@ export class ContactsRepository {
   private client: SupabaseClient | null = null;
 
   /**
-   * Persists a new contact with the email still unverified. Throws if the
-   * database rejects the write.
+   * Looks up a contact by email. Returns null when no contact with that email
+   * exists. Throws if the database cannot be queried.
+   */
+  public async findByEmail(email: string): Promise<StoredContact | null> {
+    const { data, error } = await this.getClient()
+      .from("contacts")
+      .select("email_verified")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(`Failed to look up contact: ${error.message}`);
+    }
+
+    if (!data) {
+      return null;
+    }
+
+    return this.toStoredContact(data);
+  }
+
+  /**
+   * Persists a new contact with the email still unverified. Despite the upsert,
+   * nothing is ever updated: an existing contact with the same email makes the
+   * write an atomic no-op (ON CONFLICT DO NOTHING), so the first submission
+   * wins even against a concurrent registration. Throws if the database
+   * rejects the write.
    */
   public async save(contact: ContactRegistration): Promise<void> {
     const { error } = await this.getClient()
       .from("contacts")
-      .insert(this.toRow(contact));
+      .upsert(this.toRow(contact), {
+        onConflict: "email",
+        ignoreDuplicates: true,
+      });
 
     if (error) {
       throw new Error(`Failed to save contact: ${error.message}`);
@@ -75,6 +103,11 @@ export class ContactsRepository {
       wants_email_updates: contact.wantsEmailUpdates,
       wants_email_feedback_requests: contact.wantsEmailFeedbackRequests,
     };
+  }
+
+  /** Maps the table columns to the domain view of a stored contact. */
+  private toStoredContact(row: { email_verified: boolean }): StoredContact {
+    return { emailVerified: row.email_verified };
   }
 }
 

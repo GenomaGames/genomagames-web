@@ -45,8 +45,14 @@ const emailConsent = z
  * answer stays distinct from an explicit "no" and the survey stats stay honest.
  */
 export const contactRegistrationSchema = z.object({
-  name: z.string().trim().min(1),
-  email: z.string().trim().toLowerCase().pipe(z.email()),
+  name: z.string({ error: "Name is required" }).trim().min(1, {
+    error: "Name is required",
+  }),
+  email: z
+    .string({ error: "Email is required" })
+    .trim()
+    .toLowerCase()
+    .pipe(z.email({ error: "Invalid email address" })),
   country: optionalText,
   preferredLanguage: optionalText,
   yearOfBirth: optionalNumber,
@@ -65,3 +71,11 @@ export const contactRegistrationSchema = z.object({
 });
 
 export type ContactRegistration = z.infer<typeof contactRegistrationSchema>;
+
+/**
+ * What the registration flow needs to know about an already stored contact:
+ * whether their email address has been verified yet.
+ */
+export type StoredContact = {
+  emailVerified: boolean;
+};
