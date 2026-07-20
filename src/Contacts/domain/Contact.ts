@@ -45,8 +45,8 @@ const emailConsent = z
  * answer stays distinct from an explicit "no" and the survey stats stay honest.
  */
 export const contactRegistrationSchema = z.object({
-  name: z.string({ error: "Name is required" }).trim().min(1, {
-    error: "Name is required",
+  displayName: z.string({ error: "Display name is required" }).trim().min(1, {
+    error: "Display name is required",
   }),
   email: z
     .string({ error: "Email is required" })

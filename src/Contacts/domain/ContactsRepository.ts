@@ -85,7 +85,7 @@ export class ContactsRepository {
    */
   private toRow(contact: ContactRegistration): Record<string, unknown> {
     return {
-      name: contact.name,
+      display_name: contact.displayName,
       email: contact.email,
       country: contact.country,
       preferred_language: contact.preferredLanguage,
