@@ -20,6 +20,7 @@
     "@fortawesome/free-solid-svg-icons": "6.7.2",
     "@fortawesome/react-fontawesome": "0.2.2",
     "@supabase/supabase-js": "2.109.0",
+    "botid": "1.5.11",
     "classnames": "2.5.1",
     "date-fns": "4.1.0",
     "disqus-react": "1.1.6",

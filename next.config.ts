@@ -1,3 +1,4 @@
+import { withBotId } from "botid/next/config";
 import { NextConfig } from "next";
 import NextIntlPlugin from "next-intl/plugin";
 
@@ -28,4 +29,4 @@ const nextConfig: NextConfig = () => {
   return plugins.reduce((result, plugin) => plugin(result), baseConfig);
 };
 
-export default nextConfig;
+export default withBotId(nextConfig);

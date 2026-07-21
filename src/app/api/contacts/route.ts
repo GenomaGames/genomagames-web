@@ -1,3 +1,4 @@
+import { checkBotId } from "botid/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -5,6 +6,12 @@ import { registerContactUseCase } from "@/src/Contacts/application/RegisterConta
 import { contactRegistrationSchema } from "@/src/Contacts/domain/Contact";
 
 export async function POST(request: Request): Promise<NextResponse> {
+  const verification = await checkBotId();
+
+  if (verification.isBot) {
+    return NextResponse.json({ error: "Access denied" }, { status: 403 });
+  }
+
   let body: unknown;
 
   try {
