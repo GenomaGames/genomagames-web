@@ -34,6 +34,24 @@ export class ContactsRepository {
   }
 
   /**
+   * Marks the contact with the given email as having verified their address.
+   * Setting an already-verified contact again is a harmless no-op, and an email
+   * that matches no contact updates no rows without error, so this is safe to
+   * call for a confirmation that arrives more than once or for an address that
+   * is no longer stored. Throws if the database rejects the write.
+   */
+  public async markEmailVerifiedByEmail(email: string): Promise<void> {
+    const { error } = await this.getClient()
+      .from("contacts")
+      .update({ email_verified: true })
+      .eq("email", email);
+
+    if (error) {
+      throw new Error(`Failed to mark email verified: ${error.message}`);
+    }
+  }
+
+  /**
    * Persists a new contact with the email still unverified. Despite the upsert,
    * nothing is ever updated: an existing contact with the same email makes the
    * write an atomic no-op (ON CONFLICT DO NOTHING), so the first submission
