@@ -4,6 +4,7 @@ import "@/src/styles/globals.css";
 import { ParsedUrlQuery } from "node:querystring";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
+import { BotIdClient } from "botid/client";
 import { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
@@ -84,6 +85,11 @@ const LocaleLayout: React.JSXElementConstructor<Props> = async (
       lang={locale}
       className="min-h-screen bg-gray-900 bg-linear-to-b from-gray-900 to-black font-sans text-base text-slate-200"
     >
+      <head>
+        <BotIdClient
+          protect={[{ path: "/api/contacts", method: "POST" }]}
+        />
+      </head>
       <body className="min-h-screen">
         <NextIntlClientProvider>
           <div id="top"></div>
