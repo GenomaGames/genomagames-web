@@ -1,11 +1,15 @@
+import { RegistrationLocale } from "./Contact";
+
 const DOUBLE_OPT_IN_URL =
   "https://api.brevo.com/v3/contacts/doubleOptinConfirmation";
+
+const VERIFIED_PAGE_PATH = "/games/blood-and-bytes-kagura/sign-up-alpha/verified";
 
 type SenderConfig = {
   apiKey: string;
   listId: number;
   templateId: number;
-  redirectionUrl: string;
+  baseUrl: string;
 };
 
 /**
@@ -22,12 +26,18 @@ export class EmailVerificationSender {
 
   /**
    * Sends the verification email to the given address, seeding the contact's
-   * display name so the message can greet them by it. Safe to call again for an
-   * address that has not confirmed yet: it resends the same email. Throws if
-   * the email provider rejects the request.
+   * display name so the message can greet them by it. Confirming redirects the
+   * contact to the verified page in the locale they registered from. Safe to
+   * call again for an address that has not confirmed yet: it resends the same
+   * email. Throws if the email provider rejects the request.
    */
-  public async send(email: string, displayName: string): Promise<void> {
-    const { apiKey, listId, templateId, redirectionUrl } = this.getConfig();
+  public async send(
+    email: string,
+    displayName: string,
+    locale: RegistrationLocale,
+  ): Promise<void> {
+    const { apiKey, listId, templateId, baseUrl } = this.getConfig();
+    const redirectionUrl = `${baseUrl}/${locale}${VERIFIED_PAGE_PATH}`;
 
     const response = await fetch(DOUBLE_OPT_IN_URL, {
       method: "POST",
@@ -66,7 +76,7 @@ export class EmailVerificationSender {
     const apiKey = process.env.BREVO_API_KEY;
     const listId = Number(process.env.BREVO_ALPHA_LIST_ID);
     const templateId = Number(process.env.BREVO_VERIFICATION_TEMPLATE_ID);
-    const redirectionUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
     if (!apiKey) {
       throw new Error("BREVO_API_KEY must be set to send verification emails");
@@ -82,13 +92,13 @@ export class EmailVerificationSender {
       );
     }
 
-    if (!redirectionUrl) {
+    if (!baseUrl) {
       throw new Error(
         "NEXT_PUBLIC_BASE_URL must be set to build the confirmation redirect",
       );
     }
 
-    this.config = { apiKey, listId, templateId, redirectionUrl };
+    this.config = { apiKey, listId, templateId, baseUrl };
 
     return this.config;
   }

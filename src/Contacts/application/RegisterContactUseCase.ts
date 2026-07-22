@@ -43,6 +43,7 @@ export class RegisterContactUseCase
       await this.emailVerificationSender.send(
         registration.email,
         registration.displayName,
+        registration.locale,
       );
     }
   }
