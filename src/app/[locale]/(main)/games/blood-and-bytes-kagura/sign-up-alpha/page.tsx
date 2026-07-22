@@ -40,17 +40,8 @@ const AlphaSignUpPage: React.JSXElementConstructor<Props> = async (
 
   setRequestLocale(locale);
 
-  const t = await getTranslations({
-    locale,
-    namespace: "AlphaSignUpPage",
-  });
-
   return (
     <div className="mb-8">
-      <h1 className="mb-4 text-center text-2xl font-bold md:text-3xl lg:text-4xl">
-        {t("title")}
-      </h1>
-      <p className="mx-auto mb-8 max-w-xl text-center">{t("description")}</p>
       <AlphaSignUpForm />
     </div>
   );
