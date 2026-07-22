@@ -51,17 +51,19 @@ const AlphaVerifiedPage: React.JSXElementConstructor<Props> = async (
   });
 
   return (
-    <div className="mb-8 text-center">
-      <h1 className="mb-4 text-2xl font-bold md:text-3xl lg:text-4xl">
-        {t("title")}
-      </h1>
-      <p className="mx-auto mb-8 max-w-xl">{t("message")}</p>
-      <Link
-        href="/games"
-        className="inline-block rounded bg-purple-700 px-6 py-3 font-semibold text-white hover:bg-purple-600"
-      >
-        {t("back_to_games")}
-      </Link>
+    <div className="container mx-auto mb-4 rounded-md bg-gray-800 break-words drop-shadow-xl">
+      <div className="px-3 py-8 text-center sm:px-6 md:px-8">
+        <h1 className="mb-4 text-2xl font-bold text-emerald-200 md:text-3xl lg:text-4xl">
+          {t("title")}
+        </h1>
+        <p className="mb-8 text-slate-300">{t("message")}</p>
+        <Link
+          href="/games"
+          className="inline-block rounded-md bg-indigo-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-indigo-500"
+        >
+          {t("back_to_games")}
+        </Link>
+      </div>
     </div>
   );
 };

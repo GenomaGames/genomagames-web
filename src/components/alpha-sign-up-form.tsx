@@ -146,38 +146,77 @@ const AlphaSignUpForm: React.FC = () => {
     });
   };
 
+  const fieldError = (field: keyof FieldErrors): string | undefined => {
+    switch (field) {
+      case "displayName":
+        return form.displayName.trim()
+          ? undefined
+          : t("error_display_name_required");
+      case "email": {
+        const email = form.email.trim();
+
+        if (!email) {
+          return t("error_email_required");
+        }
+
+        return EMAIL_PATTERN.test(email) ? undefined : t("error_email_invalid");
+      }
+      case "yearOfBirth": {
+        if (!form.yearOfBirth.trim()) {
+          return undefined;
+        }
+
+        const year = Number(form.yearOfBirth);
+
+        return Number.isInteger(year) &&
+          year >= yearOfBirthRange.min &&
+          year <= yearOfBirthRange.max
+          ? undefined
+          : t("error_year_of_birth_invalid");
+      }
+      case "acceptsPrivacyPolicy":
+        return form.acceptsPrivacyPolicy
+          ? undefined
+          : t("error_privacy_policy_required");
+    }
+  };
+
+  const validatedFields: (keyof FieldErrors)[] = [
+    "displayName",
+    "email",
+    "yearOfBirth",
+    "acceptsPrivacyPolicy",
+  ];
+
   const validate = (): FieldErrors => {
     const found: FieldErrors = {};
 
-    if (!form.displayName.trim()) {
-      found.displayName = t("error_display_name_required");
-    }
+    for (const field of validatedFields) {
+      const error = fieldError(field);
 
-    if (!form.email.trim()) {
-      found.email = t("error_email_required");
-    } else if (!EMAIL_PATTERN.test(form.email.trim())) {
-      found.email = t("error_email_invalid");
-    }
-
-    if (form.yearOfBirth.trim()) {
-      const year = Number(form.yearOfBirth);
-
-      if (
-        !Number.isInteger(year) ||
-        year < yearOfBirthRange.min ||
-        year > yearOfBirthRange.max
-      ) {
-        found.yearOfBirth = t("error_year_of_birth_invalid");
+      if (error) {
+        found[field] = error;
       }
-    }
-
-    if (!form.acceptsPrivacyPolicy) {
-      found.acceptsPrivacyPolicy = t("error_privacy_policy_required");
     }
 
     setErrors(found);
 
     return found;
+  };
+
+  const handleBlur = (field: keyof FieldErrors) => {
+    setErrors((current) => {
+      const next = { ...current };
+      const error = fieldError(field);
+
+      if (error) {
+        next[field] = error;
+      } else {
+        delete next[field];
+      }
+
+      return next;
+    });
   };
 
   /**
@@ -284,15 +323,22 @@ const AlphaSignUpForm: React.FC = () => {
 
   if (submitted) {
     return (
-      <div className="mx-auto max-w-xl text-center">
-        <h2 className="mb-4 text-2xl font-bold">{t("success_title")}</h2>
-        <p className="mb-8">{t("success_message")}</p>
-        <Link
-          href="/games"
-          className="inline-block rounded bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-500"
-        >
-          {t("back_to_games")}
-        </Link>
+      <div
+        role="status"
+        className="container mx-auto mb-4 rounded-md bg-gray-800 break-words drop-shadow-xl"
+      >
+        <div className="px-3 py-8 text-center sm:px-6 md:px-8">
+          <h2 className="mb-4 text-2xl font-bold text-emerald-200 md:text-3xl lg:text-4xl">
+            {t("success_title")}
+          </h2>
+          <p className="mb-8 text-slate-300">{t("success_message")}</p>
+          <Link
+            href="/games"
+            className="inline-block rounded-md bg-indigo-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-indigo-500"
+          >
+            {t("back_to_games")}
+          </Link>
+        </div>
       </div>
     );
   }
@@ -366,6 +412,7 @@ const AlphaSignUpForm: React.FC = () => {
             required
             value={form.displayName}
             onChange={(event) => set("displayName", event.target.value)}
+            onBlur={() => handleBlur("displayName")}
           />
           {errors.displayName && (
             <p className="mt-1 text-sm text-red-400">{errors.displayName}</p>
@@ -383,6 +430,7 @@ const AlphaSignUpForm: React.FC = () => {
             required
             value={form.email}
             onChange={(event) => set("email", event.target.value)}
+            onBlur={() => handleBlur("email")}
           />
           {errors.email && (
             <p className="mt-1 text-sm text-red-400">{errors.email}</p>
@@ -468,6 +516,7 @@ const AlphaSignUpForm: React.FC = () => {
             max={yearOfBirthRange.max}
             value={form.yearOfBirth}
             onChange={(event) => set("yearOfBirth", event.target.value)}
+            onBlur={() => handleBlur("yearOfBirth")}
           />
           {errors.yearOfBirth && (
             <p className="mt-1 text-sm text-red-400">{errors.yearOfBirth}</p>
@@ -669,9 +718,19 @@ const AlphaSignUpForm: React.FC = () => {
             type="checkbox"
             className={`${checkboxClass} mt-0.5`}
             checked={form.acceptsPrivacyPolicy}
-            onChange={(event) =>
-              set("acceptsPrivacyPolicy", event.target.checked)
-            }
+            onChange={(event) => {
+              set("acceptsPrivacyPolicy", event.target.checked);
+
+              if (event.target.checked) {
+                setErrors((current) => {
+                  const next = { ...current };
+
+                  delete next.acceptsPrivacyPolicy;
+
+                  return next;
+                });
+              }
+            }}
           />
           <span>
             {t.rich("label_accepts_privacy_policy", {
