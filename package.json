@@ -22,6 +22,7 @@
     "@supabase/supabase-js": "2.109.0",
     "botid": "1.5.11",
     "classnames": "2.5.1",
+    "commander": "14.0.3",
     "date-fns": "4.1.0",
     "disqus-react": "1.1.6",
     "flag-icons": "7.3.2",
@@ -77,6 +78,7 @@
     "prettier-plugin-tailwindcss": "0.6.11",
     "supabase": "2.109.1",
     "tailwindcss": "4.1.4",
+    "tsx": "4.23.1",
     "typescript": "5.8.3"
   },
   "overrides": {
